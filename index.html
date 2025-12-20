@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Rawad's Math Tutor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['\\[', '\\]']],
+                processEscapes: true
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+            }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+    
+    <script>
+        function toggleWordProblemTopic() {
+            var typeSelect = document.getElementById("problem_type");
+            var topicSelect = document.getElementById("wp_topic_container");
+            
+            if (typeSelect.value === "word_problem") {
+                topicSelect.style.display = "inline-block";
+            } else {
+                topicSelect.style.display = "none";
+            }
+        }
+        function toggleHint() {
+        var hintBox = document.getElementById("hint-box");
+        var hintBtn = document.getElementById("hint-btn");
+        if (hintBox.style.display === "none") {
+            hintBox.style.display = "block";
+            hintBtn.innerText = "Hide Hint"; // Optional: Change button text
+        } else {
+            hintBox.style.display = "none";
+            hintBtn.innerText = "Show Hint";
+        }
+    }
+
+    function toggleSteps() {
+        var stepsBox = document.getElementById("steps-box");
+        var stepsBtn = document.getElementById("steps-btn");
+        if (stepsBox.style.display === "none") {
+            stepsBox.style.display = "block";
+            stepsBtn.innerText = "Hide Steps";
+        } else {
+            stepsBox.style.display = "none";
+            stepsBtn.innerText = "Show Step-by-Step Solution";
+        }
+    }
+
+        // Run on page load to set correct initial state
+        window.onload = function() {
+        // 1. Run the dropdown logic (keep your existing menu working)
+        toggleWordProblemTopic();
+
+        // 2. Check for correct answer and trigger flash
+        var feedbackElement = document.querySelector('.feedback');
+        
+        // If feedback exists AND it says "Correct"
+        if (feedbackElement && feedbackElement.innerText.includes("Correct")) {
+            // Add the CSS class to the entire body of the page
+            document.body.classList.add("flash-success");
+        }
+    };
+    </script>
+</head>
+
+<body>
+    
+<div class="container">
+
+    <img style="margin-bottom: 0;" src="{{ url_for('static', filename='logo.jpeg') }}" alt="Logo" class="logo">
+    <h1>Rawad’s Math Tutor</h1>
+    <p class="subtitle">Interactive Precalculus Practice</p>
+
+    <div class="status">
+        Mode: {{ problem_type|replace('_', ' ')|capitalize }} 
+        {% if problem_type == 'word_problem' and word_topic %}
+         ({{ word_topic|capitalize }})
+        {% endif %}
+        • Difficulty: {{ difficulty|capitalize }}
+    </div>
+
+    <div class="question">{{ question|safe }}</div>
+
+    <form method="POST">
+        <input type="text" name="answer" placeholder="Enter your answer" autocomplete="off">
+        <br>
+        <button type="submit">Submit</button>
+    </form>
+
+    <form method="POST" class="controls">
+        <select name="difficulty">
+            <option value="easy" {% if difficulty == 'easy' %}selected{% endif %}>Easy</option>
+            <option value="intermediate" {% if difficulty == 'intermediate' %}selected{% endif %}>Intermediate</option>
+            <option value="hard" {% if difficulty == 'hard' %}selected{% endif %}>Hard</option>
+        </select>
+
+        <select name="problem_type" id="problem_type" onchange="toggleWordProblemTopic()">
+            <option value="linear" {% if problem_type == 'linear' %}selected{% endif %}>Linear</option>
+            <option value="quadratic" {% if problem_type == 'quadratic' %}selected{% endif %}>Quadratic</option>
+            <option value="system" {% if problem_type == 'system' %}selected{% endif %}>Linear System</option>
+            <option value="absolute_value" {% if problem_type == 'absolute_value' %}selected{% endif %}>Absolute Value</option>
+            <option value="rational" {% if problem_type == 'rational' %}selected{% endif %}>Rational</option>
+            <option value="exponential" {% if problem_type == 'exponential' %}selected{% endif %}>Exponential</option>
+            <option value="logarithmic" {% if problem_type == 'logarithmic' %}selected{% endif %}>Logarithmic</option>
+            <option value="word_problem" {% if problem_type == 'word_problem' %}selected{% endif %}>Word Problem</option>
+        </select>
+
+        <div id="wp_topic_container" style="display: none;">
+            <select name="word_problem_topic">
+                <option value="linear" {% if word_topic == 'linear' %}selected{% endif %}>Linear</option>
+                <option value="quadratic" {% if word_topic == 'quadratic' %}selected{% endif %}>Quadratic</option>
+                <option value="system" {% if word_topic == 'system' %}selected{% endif %}>Systems</option>
+                <option value="absolute_value" {% if word_topic == 'absolute_value' %}selected{% endif %}>Absolute Value</option>
+                <option value="rational" {% if word_topic == 'rational' %}selected{% endif %}>Rational</option>
+                <option value="exponential" {% if word_topic == 'exponential' %}selected{% endif %}>Exponential</option>
+                <option value="logarithmic" {% if word_topic == 'logarithmic' %}selected{% endif %}>Logarithmic</option>
+                <option value="general" {% if word_topic == 'general' %}selected{% endif %}>General/Mixed</option>
+            </select>
+        </div>
+
+        <button type="submit">Change Settings</button>
+    </form>
+
+    <form method="POST" class="controls">
+        <button name="skip">Skip</button>
+        <button name="exit">Exit</button>
+    </form>
+
+    {% if feedback %}
+        <p class="feedback {{ 'correct' if 'Correct' in feedback else 'wrong' }}">
+            {{ feedback }}
+        </p>
+    {% endif %}
+
+    {% if hint %}
+        <button type="button" id="hint-btn" onclick="toggleHint()" style="margin-top: 15px; background-color: #f59e0b;">
+            Show Hint
+        </button>
+
+        <div id="hint-box" class="hint" style="display: none; margin-top: 10px;">
+            <strong>Hint:</strong> {{ hint }}
+        </div>
+    {% endif %}
+
+    {% if steps %}
+        <button type="button" id="steps-btn" onclick="toggleSteps()" style="margin-top: 10px; background-color: #8b5cf6;">
+            Show Step-by-Step Solution
+        </button>
+
+        <div id="steps-box" class="hint" style="display: none; margin-top: 10px;">
+            <strong>Step-by-Step Solution:</strong>
+            <ul>
+                {% for step in steps %}
+                    <li>{{ step }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
+    <p class="score">Score: {{ score }}</p>
+
+</div>
+</body>
+</html>

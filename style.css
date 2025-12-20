@@ -1,0 +1,152 @@
+body {
+    font-family: "Times New Roman", serif;
+    /*background: linear-gradient(135deg, #e5e7eb, #f8fafc);*/
+    background: rgba(255, 98, 0, 0.15);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 40px;
+    min-height: 100vh;
+}
+
+.container {
+    background: white;
+    width: 100%;
+    /* Ensure padding doesn't expand width */
+    box-sizing: border-box; 
+    padding: 30px;
+    border-radius: 18px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    text-align: center;
+    /* Prevent container itself from overflowing horizontal screens */
+    max-width: 90%; 
+}
+
+h1 {
+    color: #1e3a8a;
+    margin-bottom: 5px;
+    margin-top: 0;
+}
+
+.subtitle {
+    color: #475569;
+    margin-bottom: 20px;
+}
+
+.question {
+    /* Use normal white-space so text wraps naturally */
+    white-space: pre-wrap; 
+    text-align: left;
+    display: block; /* Changed from inline-block to block to fill width */
+    width: 100%;
+    font-size: 20px;
+    margin-bottom: 15px;
+    
+    /* These lines force long text/math to stay inside the box */
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-word;
+}
+
+.status {
+    background: #eff6ff;
+    padding: 10px;
+    border-radius: 10px;
+    font-weight: bold;
+    color: #1e40af;
+    margin-bottom: 20px;
+}
+
+input {
+    padding: 10px;
+    width: 80%;
+    font-size: 16px;
+    margin-bottom: 10px;
+    box-sizing: border-box; /* Ensures padding counts inside width */
+}
+
+button {
+    padding: 10px 16px;
+    font-size: 16px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    background-color: #10b981;
+    color: white;
+}
+
+button:hover {
+    background-color: #059669;
+}
+
+.controls button {
+    background-color: #3b82f6;
+    margin: 5px;
+}
+
+.controls button:hover {
+    background-color: #2563eb;
+}
+
+.feedback.correct {
+    color: #16a34a;
+    font-weight: bold;
+}
+
+.feedback.wrong {
+    color: #dc2626;
+    font-weight: bold;
+}
+
+.hint {
+    background: #eff6ff;
+    padding: 12px;
+    border-radius: 10px;
+    margin-top: 10px;
+    color: #1e40af;
+    text-align: left;
+
+    /* CRITICAL FIX: Forces text to stay inside the box */
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-word;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* Ensure lists inside hints also wrap */
+.hint ul, .hint li {
+    max-width: 100%;
+    overflow-wrap: break-word;
+}
+
+.score {
+    margin-top: 15px;
+    background: #d1fae5;
+    padding: 10px;
+    width: fit-content;
+    flex: 1fr;
+    margin: 0 auto;
+    font-weight: bold;
+    color: #065f46;
+    border-radius: 7px;
+}
+
+select {
+    padding: 8px;
+    margin: 5px;
+    font-size: 15px;
+    max-width: 100%; /* Prevents dropdowns from overflowing on mobile */
+}
+
+/* Define the flash animation */
+@keyframes successFlash {
+    0% { background-color: rgba(255, 98, 0, 0.15); } /* Original Color */
+    10% { background-color: #86efac; }               /* Bright Green Flash! */
+    100% { background-color: rgba(255, 98, 0, 0.15); } /* Fade back to normal */
+}
+
+/* This class triggers the animation */
+.flash-success {
+    animation: successFlash 2s ease-out;
+}
