@@ -18,7 +18,7 @@ import json
 import re
 
 app = Flask(__name__)
-app.secret_key = "rudi.best"
+app.secret_key = os.environ.get("SECRET_KEY")
 
 @app.route("/", methods=["GET", "POST"])
 def index():
