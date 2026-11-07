@@ -18,8 +18,16 @@ from ai_gen import get_ai_word_problem
 import json
 import re
 
-app = Flask(__name__)
-app.secret_key = os.environ.get("SECRET_KEY")
+app = Flask(__name__, static_folder='static')
+
+# Use SECRET_KEY from the environment when available. If it's not set, create
+# a temporary secret key for development so Flask sessions are available.
+secret = os.environ.get("SECRET_KEY")
+if not secret:
+    import secrets
+    secret = secrets.token_urlsafe(32)
+    print("Warning: SECRET_KEY not set. Using a temporary secret key; sessions will not persist across restarts.")
+app.secret_key = secret
 
 @app.route("/", methods=["GET", "POST"])
 def index():

@@ -1,3 +1,4 @@
 Flask
 huggingface_hub
 gunicorn
+pytest

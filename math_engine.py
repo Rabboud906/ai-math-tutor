@@ -194,16 +194,34 @@ def generate_exponential_problem(difficulty):
         answer = math.log(c, base) - exponent
         hint = f"Use logarithms to solve for x: x = log_base({c}) - {exponent}"
         return question, answer, hint, (base, c, exponent)
+
     else:
-        base = random.randint(3,10)
-        exponent = random.randint(3,5)
-        c = random.randint(1, 100)
-        d = random.randint(10,30)
-        # Correct LaTeX
-        question = rf"Solve for $x$: ${base}^{{{exponent}x + {c-d}}} = {c}$ , 'answer Enter as x'"
-        answer = (math.log(c, base) - (c-d)) / exponent
-        hint = f"Use logarithms to solve for x: x = (log_base({c}) - ({c-d})) / {exponent}"
-        return question, answer, hint, (base, c, exponent, d)
+        base = random.randint(2, 4)
+        exponent = random.randint(2, 4)
+
+        # Choose a positive answer first
+        x_target = random.randint(1, 3)
+
+        # Create the equation around that answer
+        offset = random.randint(-2, 2)
+        power = exponent * x_target + offset
+        c = base ** power
+
+        # Preserve existing coefficient format
+        d = c - offset
+
+        question = (
+            rf"Solve for $x$: "
+            rf"${base}^{{{exponent}x + ({offset})}} = {c}$"
+        )
+
+        answer = x_target
+
+        hint = "Take logarithms, then isolate x."
+
+        return question, answer, hint, (
+            base, c, exponent, d
+        )
 
 
 def generate_logarithmic_problem(difficulty):

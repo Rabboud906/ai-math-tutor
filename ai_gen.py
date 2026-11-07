@@ -1,11 +1,19 @@
 import json
 import re
+import os
 from huggingface_hub import InferenceClient
+
+# Read API key from environment
 api_key = os.environ.get("HF_API_KEY")
 if not api_key:
-    # Optional: Print a warning or raise an error if the key is missing
-    print("Warning: HF_API_KEY not found in environment variables.") 
-client = InferenceClient(api_key=api_key)
+    # Don't initialize the client when no API key is provided. The calling
+    # code will receive a clear error response from get_ai_word_problem.
+    print("Warning: HF_API_KEY not found in environment variables. AI word problems will be disabled.")
+    client = None
+else:
+    # The InferenceClient expects the token parameter name 'token'
+    # (older code used 'api_key' which will not authenticate properly).
+    client = InferenceClient(token=api_key)
 
 
 def get_ai_word_problem(topic, difficulty):
@@ -23,6 +31,9 @@ def get_ai_word_problem(topic, difficulty):
     )
     
     try:
+        if client is None:
+            raise RuntimeError("Inference client is not configured. Set HF_API_KEY in your environment to enable AI word problems.")
+
         response = client.chat.completions.create(
             model="Qwen/Qwen2.5-72B-Instruct", 
             messages=[{"role": "user", "content": prompt}],
